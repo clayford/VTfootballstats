@@ -1,0 +1,21 @@
+{
+    "contents" : "",
+    "created" : 1369515654661.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7BB5BACD",
+    "lastKnownWriteTime" : 3835158556394677046,
+    "path" : null,
+    "properties" : {
+        "caption" : "dsData2012",
+        "contentUrl" : "content?title=dsData2012&file=2f250fe7376c43c895d2f290df58cdd3.htm",
+        "displayedObservations" : 163,
+        "displayedVariables" : 8,
+        "totalObservations" : 163,
+        "variables" : 7
+    },
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}

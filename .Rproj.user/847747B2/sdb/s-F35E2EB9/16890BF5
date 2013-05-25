@@ -1,0 +1,18 @@
+{
+    "contents" : "# drive summaries would be good to start with\n# get last three columns: How Lost, Pl-Yds, TOP\nlibrary(XML) # needed to convert HTML table to list object\n\nvtFballData <- function(start,stop,season){\n\tdsf <- c()\n\t# read the source code\n\tfor (i in start:stop){\n\turl <- paste(\"http://www.hokiesports.com/football/stats/showstats.html?\",i,sep=\"\")\n\tweb_page <- readLines(url)\n\n\t# find where VT drive summary begins\n\tdsum <- web_page[(grep(\"Virginia Tech Drive Summary\", web_page) - 2):(grep(\"Virginia Tech Drive Summary\", web_page) + 18)]\n\tdsum2 <- readHTMLTable(dsum)\n\trn <- dim(dsum2[[1]])[1]\n\tcn <- dim(dsum2[[1]])[2]\n\tds <- dsum2[[1]][4:rn,c(1,(cn-2):cn)]\n\tds[,3] <- as.character(ds[,3]) # convert from factor to character\n\tpy <- do.call(rbind,strsplit(sub(\"-\",\" \",ds[,3]),\" \"))\n\tds2 <- cbind(ds,py)\n\tds2[,5] <- as.character(ds2[,5]) # convert from factor to character\n\tds2[,6] <- as.character(ds2[,6]) # convert from factor to character\n\tds2[,5] <- as.numeric(ds2[,5]) # convert from character to numeric\n\tds2[,6] <- as.numeric(ds2[,6]) # convert from character to numeric\n\tds2[,3] <- NULL # drop original pl-yds column\n\n\tnames(ds2) <-c(\"quarter\",\"result\",\"top\",\"plays\",\"yards\")\n\t# drop unused factor levels carried over from readlines\n\tds2$quarter <- ds2$quarter[, drop=TRUE] \n\tds2$result <- ds2$result[, drop=TRUE]\n\n\t# convert TOP from factor to character\n\tds2[,3] <- as.character(ds2[,3]) \n\t# convert TOP from M:S to just seconds\n\tds2$top <- sapply(strsplit(ds2$top,\":\"),\n  \t\tfunction(x) {\n    \t\tx <- as.numeric(x)\n    \t\tx[1]*60 + x[2]})\n\n\t# need to add opponent\n\topp <- web_page[grep(\"Drive Summary\", web_page)]\n\topp <- opp[grep(\"Virginia Tech\", opp, invert=TRUE)] # get the one that is not VT\n\topp <- strsplit(opp,\">\")[[1]][2]\n\topp <- sub(\" Drive Summary</td\",\"\",opp)\n\tds2 <- cbind(season,opp,ds2)\n\tdsf <- rbind(dsf,ds2)\n\t}\nreturn(dsf)\n}\n\ndsData2012 <- vtFballData(14871,14882,2012)\n\n\nurl <- paste(\"http://www.hokiesports.com/football/stats/showstats.html?14871\")\nweb_page <- readLines(url)\n\n\n##some stats##\nsapply(ds2[1,],class) # check class of each variable\n\nTOP\navgTOP <- round(mean(dsData2012$top[dsData2012$top > 0])) # drop TOP = 0, take mean, round\npaste(avgTOP%/%60,\":\",avgTOP%%60,sep=\"\") # convert to minutes and seconds (rough)\ntapply(dsData2012$top,dsData2012$opp,mean) # avg TOP per game\ntapply(dsData2012$top,dsData2012$opp,sum) # total TOP per game\ntapply(dsData2012$top,dsData2012$opp,function(x){paste(sum(x)%/%60,\":\",sum(x)%%60,sep=\"\")}) # total TOP per game, converted to m:s\n\n\n####################################################################################\n# find where play-by-play begins\ngrep(\"Play-By-Play\", web_page)\n[1] 1144\n\n# get just the play-by-play section\n# table code starts two lines above \"Play-By-Play\"\n# don't need anything from Participation on down\n\ntest <- web_page[(grep(\"Play-By-Play\", web_page) - 2):(grep(\"<h4>Participation</h4>\", web_page)-1)]\ntest2 <- readHTMLTable(test)\n",
+    "created" : 1369515192234.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "792989398",
+    "id" : "16890BF5",
+    "lastKnownWriteTime" : 1369515301,
+    "path" : "~/GitHub/VTfootballstats/vt_fb_data.R",
+    "properties" : {
+        "notebook_author" : "clayford",
+        "notebook_title" : "vt_fb_data.R",
+        "notebook_type" : "default"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
