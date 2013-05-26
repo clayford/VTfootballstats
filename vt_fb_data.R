@@ -94,13 +94,16 @@ ids <- substr(box1,1,5)
 
 # seasons: 1987 - 2012 
 
-allids <- c() #will hold all box score ids
-
+allids <- data.frame(season=numeric(0),ID=character(0)) #will hold all box score ids; 322 games from 1987 - 2012
+# new version using sub() function
 for (i in 1987:2012){
   url <- paste("http://www.hokiesports.com/football/stats/",i,sep="")
   wp <- readLines(url)  
   box <- grep("showstats\\.html\\?[0-9]+",wp,value=TRUE) # split the element at "?"
-  box <- unlist(strsplit(box,"\\?"))[c(FALSE,TRUE)] #get every second element
-  ids <- substr(box,1,5)  
-  allids <- c(allids,ids)
+  ids <- sub(".*?html\\?([0-9]{4,5}).*", "\\1", box)
+  ids <- data.frame(season=i,ID=ids)
+  allids <- rbind(allids,ids)
 }
+allids
+
+
