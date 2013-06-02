@@ -79,16 +79,6 @@ names(dsf)[1] <- "season"
 setwd("data")
 write.csv(dsf,"vt_drive_summaries.csv", row.names = FALSE)
 
-# TRY IT
-#2012
-dsData2012 <- vtFballData(14871,14882,2012)
-dsData2012b <- vtFballData(15513,15513,2012) # bowl game
-season2012 <- rbind(dsData2012,dsData2012b)
-
-#2011 - 14117,14129,14818
-
-# works for 1987! Earliest season on site
-# test1987 <- vtFballData(5803,5813,1987)
 
 
 ####################################################################################
