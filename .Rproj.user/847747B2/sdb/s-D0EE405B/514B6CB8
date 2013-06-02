@@ -1,0 +1,16 @@
+{
+    "contents" : "# 5881\n# vtFballData <- function(start,stop,season){\ndsf <- c()\n# read the source code\nj <- 1 # counter for season from allids\nfor (i in 5881:5882){\n  url <- paste(\"http://www.hokiesports.com/football/stats/showstats.html?\",i,sep=\"\")\n  web_page <- readLines(\"http://www.hokiesports.com/football/stats/showstats.html?5881\")\n  \n  \n  # find where VT drive summary begins\n  dsum <- web_page[(grep(\"Virginia Tech Drive Summary\", web_page) - 2):(grep(\"Virginia Tech Drive Summary\", web_page) + 18)]\n  dsum2 <- readHTMLTable(dsum)\n  rn <- dim(dsum2[[1]])[1]\n  cn <- dim(dsum2[[1]])[2]\n  ds <- dsum2[[1]][4:rn,c(1,(cn-2):cn)]\n  ds[,3] <- as.character(ds[,3]) # convert Pl-Yds from factor to character\n  # substitute space for first dash, split string at space (creates list object)\n  # use do.call to assemble list elements into data frame\n  py <- do.call(rbind,strsplit(sub(\"-\",\" \",ds[,3]),\" \"))\n  # add py dataframe (plays and yards) to ds\n  ds2 <- cbind(ds,py)\n  ds2[,5] <- as.character(ds2[,5]) # convert from factor to character\n  ds2[,6] <- as.character(ds2[,6]) # convert from factor to character\n  ds2[,5] <- as.numeric(ds2[,5]) # convert from character to numeric\n  ds2[,6] <- as.numeric(ds2[,6]) # convert from character to numeric\n  ds2[,3] <- NULL # drop original pl-yds column\n  \n  names(ds2) <-c(\"quarter\",\"result\",\"top\",\"plays\",\"yards\")\n  # drop unused factor levels carried over from readlines\n  ds2$quarter <- ds2$quarter[, drop=TRUE] \n  ds2$result <- ds2$result[, drop=TRUE]\n  \n  # convert TOP from factor to character\n  ds2[,3] <- as.character(ds2[,3]) \n  # convert TOP from M:S to just seconds\n  ds2$top <- sapply(strsplit(ds2$top,\":\"),\n                    function(x) {\n                      x <- as.numeric(x)\n                      x[1]*60 + x[2]})\n  \n  # need to add opponent\n  opp <- web_page[grep(\"Drive Summary\", web_page)]\n  opp <- opp[grep(\"Virginia Tech\", opp, invert=TRUE)] # get the one that is not VT\n  opp <- strsplit(opp,\">\")[[1]][2]\n  opp <- sub(\" Drive Summary</td\",\"\",opp)\n  ds2 <- cbind(allids[j,1],opp,ds2)\n  dsf <- rbind(dsf,ds2)\n  j <- j + 1 # counter to get season out of allids data frame\n}\n",
+    "created" : 1370180563931.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "929932813",
+    "id" : "514B6CB8",
+    "lastKnownWriteTime" : 1370179836,
+    "path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
