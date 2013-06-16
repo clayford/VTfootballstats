@@ -1,5 +1,6 @@
 # drive summaries would be good to start with
 # get last three columns: How Lost, Pl-Yds, TOP
+setwd("C:/Users/clayford/Documents/GitHub/VTfootballstats/")
 library(XML) # needed to convert HTML table to list object
 
 # I think it makes sense to get all IDs first then use those in the loop instead of looping through each season
@@ -20,8 +21,9 @@ for (i in 1987:2012){
 # recall that allids has season  
 
 # turns out there are no drive summaries for 1994 (all games?)
-# 5881
+# 5881; 14871
 # vtFballData <- function(start,stop,season){
+
 dsf <- c()
 # read the source code
 j <- 1 # counter for season from allids
@@ -68,7 +70,39 @@ for (i in allids[,2]){
 	opp <- opp[grep("Virginia Tech", opp, invert=TRUE)] # get the one that is not VT
 	opp <- strsplit(opp,">")[[1]][2]
 	opp <- sub(" Drive Summary</td","",opp)
-	ds2 <- cbind(allids[j,1],opp,ds2) # allids[j,1] gives the season
+  
+  # need to indicate win or loss
+	result <- web_page[grep("linescore",web_page):(grep("linescore",web_page) + 16)]
+	result2 <- readHTMLTable(result)
+	
+	# just want scores, not last line which is garbage; turns to data frame
+	result2 <- result2[[1]][1:2,]
+	
+	# make final score numeric
+	result2$T <- as.character(result2$T)
+	result2$T <- as.numeric(result2$T)
+	
+	# row number that contains VT
+	hk <- grep("Virginia Tech",result2[,1])
+	nhk <- grep("Virginia Tech",result2[,1],invert=TRUE)
+	
+	# get last column number
+	lc <- dim(result2)[2]
+	
+	# vt and opp score
+	hks <- result2[hk,lc]
+	nhks <- result2[nhk,lc]
+  
+  #determine win or loss or tie
+  if (hks > nhks) {
+    outcome <- "win"
+  } else if (hks < nhks){
+    outcome <- "loss"
+  } else {
+    outcome <- "tie" 
+  }
+  
+	ds2 <- cbind(allids[j,1],opp,ds2,outcome) # allids[j,1] gives the season
 	dsf <- rbind(dsf,ds2)
   j <- j + 1 # counter to get season out of allids data frame
 }
@@ -108,3 +142,36 @@ grep("Play-By-Play", web_page)
 
 test <- web_page[(grep("Play-By-Play", web_page) - 2):(grep("<h4>Participation</h4>", web_page)-1)]
 test2 <- readHTMLTable(test)
+
+# trying to figure out the winner of game
+library(XML)
+web_page <- readLines("http://www.hokiesports.com/football/stats/showstats.html?14871")
+result <- web_page[grep("linescore",web_page):(grep("linescore",web_page) + 16)]
+result2 <- readHTMLTable(result)
+
+# just want scores, not last line which is garbage; turns to data frame
+result2 <- result2[[1]][1:2,]
+
+# make final score numeric
+result2$T <- as.character(result2$T)
+result2$T <- as.numeric(result2$T)
+
+# row number that contains VT
+hk <- grep("Virginia Tech",result2[,1])
+nhk <- grep("Virginia Tech",result2[,1],invert=TRUE)
+
+# get last column number
+lc <- dim(result2)[2]
+
+# vt and opp score
+hks <- result2[hk,lc]
+nhks <- result2[nhk,lc]
+
+if (hks > nhks) {
+  outc <- "win"
+} else if (hks < nhks){
+  outc <- "loss"
+} else {
+  outc <- "tie" 
+}
+

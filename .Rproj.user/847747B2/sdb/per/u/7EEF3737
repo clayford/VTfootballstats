@@ -1,0 +1,16 @@
+{
+    "contents" : "Test <- function(y){\n  min(y)\n}\ntest.rep <- rep(NA,n.sims)\nfor (s in 1:n.sims){\n  test.rep[s] <- Test(y.rep[s,])\n}\n\ndev.off()\nhist(test.rep,xlim=range(Test(y), test.rep))\n",
+    "created" : 1371121567552.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "599691789",
+    "id" : "7EEF3737",
+    "lastKnownWriteTime" : 138046336,
+    "path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
