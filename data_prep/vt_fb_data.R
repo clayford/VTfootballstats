@@ -25,6 +25,7 @@ for (i in 1987:2012){
 # vtFballData <- function(start,stop,season){
 
 dsf <- c()
+log <- c()
 # read the source code
 j <- 1 # counter for season from allids
 for (i in allids[,2]){
@@ -32,7 +33,10 @@ for (i in allids[,2]){
 	web_page <- readLines(url)
   
   # see if drive summary is available, not always unfortunately
-	if (length(grep("Virginia Tech Drive Summary", web_page)) == 0) {j <- j + 1; next} #increment counter to keep track of seasons
+	if (length(grep("Virginia Tech Drive Summary", web_page)) == 0) {
+	  log <- rbind(log,allids[j,]) # track which games have no drive summary
+    j <- j + 1
+    next} #increment counter to keep track of seasons
 	
   # find where VT drive summary begins
 	dsum <- web_page[(grep("Virginia Tech Drive Summary", web_page) - 2):(grep("Virginia Tech Drive Summary", web_page) + 18)]
@@ -174,4 +178,5 @@ if (hks > nhks) {
 } else {
   outc <- "tie" 
 }
+
 
